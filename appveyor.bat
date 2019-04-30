@@ -188,22 +188,9 @@ set CL=/D_USING_V110_SDK71_
 
 :: Remove progress bar from the build log
 sed -e "s/\$(LINKARGS2)/\$(LINKARGS2) | sed -e 's#.*\\\\r.*##'/" Make_mvc.mak > Make_mvc2.mak
-:: Build GUI version
+:: Build GUI/CUI version
 nmake -f Make_mvc2.mak ^
-	GUI=yes OLE=yes DIRECTX=yes ^
-	FEATURES=HUGE IME=yes MBYTE=yes ICONV=yes DEBUG=no ^
-	DYNAMIC_PERL=yes PERL=%PERL_DIR% ^
-	DYNAMIC_PYTHON=yes PYTHON=%PYTHON_DIR% ^
-	DYNAMIC_PYTHON3=yes PYTHON3=%PYTHON3_DIR% ^
-	DYNAMIC_LUA=yes LUA=%LUA_DIR% ^
-	DYNAMIC_TCL=yes TCL=%TCL_DIR% ^
-	DYNAMIC_RUBY=yes RUBY=%RUBY_DIR% RUBY_MSVCRT_NAME=msvcrt ^
-	DYNAMIC_MZSCHEME=yes "MZSCHEME=%RACKET_DIR%" ^
-	TERMINAL=yes ^
-	|| exit 1
-:: Build CUI version
-nmake -f Make_mvc2.mak ^
-	GUI=no OLE=no DIRECTX=no ^
+	VIMDLL=yes OLE=yes DIRECTX=yes ^
 	FEATURES=HUGE IME=yes MBYTE=yes ICONV=yes DEBUG=no ^
 	DYNAMIC_PERL=yes PERL=%PERL_DIR% ^
 	DYNAMIC_PYTHON=yes PYTHON=%PYTHON_DIR% ^
@@ -260,6 +247,7 @@ copy /Y GvimExt\*.reg      GvimExt32\
 copy /Y ..\README.txt ..\runtime
 copy /Y ..\vimtutor.bat ..\runtime
 copy /Y *.exe ..\runtime\
+copy /Y vim*.dll ..\runtime\
 copy /Y xxd\*.exe ..\runtime
 copy /Y tee\*.exe ..\runtime
 mkdir ..\runtime\GvimExt64
