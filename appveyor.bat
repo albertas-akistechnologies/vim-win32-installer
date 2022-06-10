@@ -324,37 +324,6 @@ mkdir ..\vim\%dir%
 xcopy ..\runtime ..\vim\%dir% /Y /E /V /I /H /R /Q
 7z a ..\..\gvim_%APPVEYOR_REPO_TAG_NAME:~1%_%ARCH%.zip ..\vim
 
-:: Create installer
-c:\cygwin64\bin\bash -lc "cd $(cygpath '%APPVEYOR_BUILD_FOLDER%')/vim/runtime/doc && touch ../../src/auto/config.mk && make uganda.nsis.txt"
-copy gvim.exe gvim_ole.exe
-copy vim.exe vimw32.exe
-copy tee\tee.exe teew32.exe
-copy xxd\xxd.exe xxdw32.exe
-copy install.exe installw32.exe
-copy uninstall.exe uninstallw32.exe
-pushd ..\nsis
-7z x icons.zip > nul
-if /i "%ARCH%"=="x64" (
-	"%ProgramFiles(x86)%\NSIS\makensis" /DVIMRT=..\runtime /DGETTEXT=c: /DWIN64=1 /DPATCHLEVEL=%PATCHLEVEL% gvim.nsi "/XOutFile ..\..\gvim_%APPVEYOR_REPO_TAG_NAME:~1%_%ARCH%.exe"
-) else (
-	"%ProgramFiles(x86)%\NSIS\makensis" /DVIMRT=..\runtime /DGETTEXT=c: /DPATCHLEVEL=%PATCHLEVEL%  gvim.nsi "/XOutFile ..\..\gvim_%APPVEYOR_REPO_TAG_NAME:~1%_%ARCH%.exe"
-)
-popd
-
-:: Create zipfile for signing with signpath.io
-:: This will create a single zip file that should be uploaded to signpath
-:: signpath can then sign each artifact inside the zip file
-:: (the Vim zip archive as well as the installer)
-echo Creating Signpath Zip Archive
-cd %APPVEYOR_BUILD_FOLDER%
-7z a unsigned-gvim_%APPVEYOR_REPO_TAG_NAME:~1%_%ARCH%.zip gvim_%APPVEYOR_REPO_TAG_NAME:~1%_%ARCH%.zip gvim*.exe
-
-:: Create winget yaml file
-if /i "%ARCH%"=="x64" (
-	start /wait vim\src\gvim -u NONE -N -S scripts\winget.vim scripts\winget_template.yml
-	type gvim_%APPVEYOR_REPO_TAG_NAME:~1%.yml
-)
-
 @echo off
 goto :eof
 
